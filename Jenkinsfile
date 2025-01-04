@@ -58,6 +58,7 @@ helm repo index . --merge index.yaml --url https://github.com/dispiny/demo-chart
     stage('helm-Post-Build') {
       steps {
         sh '''#!/bin/bash
+ls -al
 gh auth setup-git
 gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
 rm -rf *.tgz
@@ -70,8 +71,8 @@ git push origin master'''
   }
   environment {
     VERSION = """${sh(
-                        returnStdout: true,
-                        script: 'cat VERSION'
-                    )}"""
+                              returnStdout: true,
+                              script: 'cat VERSION'
+                          )}"""
     }
   }
