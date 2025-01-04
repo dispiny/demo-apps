@@ -69,6 +69,7 @@ helm repo index . --merge index.yaml --url https://github.com/dispiny/demo-chart
                 """
                 
                 emailext (
+                    from: recipient.
                     to: recipient,
                     subject: subject,
                     body: body,
