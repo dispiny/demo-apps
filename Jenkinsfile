@@ -68,8 +68,14 @@ git config user.email "aws.pjm1024cl@gmail.com"
           """
         }
 
+        withCredentials([string(credentialsId: 'github-token', variable: 'GH_TOKEN')]) {
+          sh """
+            echo $GH_TOKEN | gh auth locagin --with-token
+          """
+        }
+
+
         sh '''#!/bin/bash
-gh auth setup-git
 gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
 rm -rf *.tgz
 git add -A 
