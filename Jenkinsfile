@@ -1,5 +1,17 @@
 pipeline {
   agent any
+  environment {
+    VERSION = """${sh(
+            returnStdout: true,
+            script: 'cat VERSION'
+        )}""" 
+        
+    EXIT_STATUS = """${sh(
+            returnStatus: true,
+            script: 'exit 1'
+        )}"""
+  }
+  
   stages {
     stage('Pre-Build') {
       steps {
