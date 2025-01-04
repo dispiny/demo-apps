@@ -56,30 +56,6 @@ helm repo index . --merge index.yaml --url https://github.com/dispiny/demo-chart
       }
     }
     
-    stage('Manual Approval') {
-        steps {
-            script {
-                def recipient = "pjm1024cl@gmail.com"
-                def subject = "Helm을 릴리즈에 배포하기위해 수동승인 요청드립니다. (v$VERSION)"
-                def body = """
-                    <h3>수동 승인 요청</h3>
-                    <p>Helm chart을 Github Releases에 배포하기 위해 수동승인인을 대기중입니다..</p>
-                    <p>Version: v$VERSION</p>
-                    <p>Jenkins Dashboard에서 승인을 부탁드립니다. 감사합니다.</p>
-                """
-                
-                emailext (
-                    from: recipient,
-                    to: recipient,
-                    subject: subject,
-                    body: body,
-                    mimeType: 'text/html'
-                )
-            }
-
-            input 'helm deploy?'
-        }
-    }
 
     stage('helm-Post-Build') {
       steps {
