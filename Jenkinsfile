@@ -67,12 +67,13 @@ git config user.email "aws.pjm1024cl@gmail.com"
             git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/dispiny/demo-charts.git
           """
         }
-
+        sh 'echo $GH_TOKEN'
         withCredentials([string(credentialsId: 'github-token', variable: 'GH_TOKEN')]) {
           sh """
             echo $GH_TOKEN | gh auth login --with-token
           """
         }
+        sh 'echo $GH_TOKEN'
 
 
         sh '''#!/bin/bash
