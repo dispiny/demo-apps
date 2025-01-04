@@ -1,12 +1,5 @@
 pipeline {
   agent any
-  environment {
-    VERSION = """${sh(
-            returnStdout: true,
-            script: 'cat VERSION'
-        )}""" 
-  }
-
   stages {
     stage('Pre-Build') {
       steps {
@@ -14,7 +7,6 @@ pipeline {
 aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com
 echo $VERSION
 '''
-
       }
     }
 
@@ -41,7 +33,7 @@ docker build -t 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v
       }
     }
 
-    stage('helm-Build') {
+    stage('helm-Pre-Build') {
       steps {
         sh '''#!/bin/bash
 echo $VERSION
@@ -52,5 +44,31 @@ sed -i "s|tag:.*|tag: v$VERSION|g" backend-skills-repo/values.yaml
       }
     }
 
+    stage('helm-Build') {
+      steps {
+        sh '''#!/bin/bash
+helm package backend-skills-repo
+helm repo index . --merge index.yaml --url https://github.com/dispiny/demo-charts/releases/download/v$VERSION/'''
+      }
+    }
+
+    stage('helm-Post-Build') {
+      steps {
+        sh '''#!/bin/bash
+gh auth setup-git
+gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
+rm -rf *.tgz
+git add -A 
+git commit -m "$VERSION commit!"
+git push origin master'''
+      }
+    }
+
   }
-}
+  environment {
+    VERSION = """${sh(
+                  returnStdout: true,
+                  script: 'cat VERSION'
+              )}"""
+    }
+  }
