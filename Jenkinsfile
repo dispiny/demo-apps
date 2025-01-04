@@ -68,7 +68,7 @@ git config user.email "aws.pjm1024cl@gmail.com"
           """
         }
         // sh 'gh auth login -h github.com --with-token'
-        // sh 'gh auth setup-git'
+        sh 'echo "test123"'
         withCredentials([string(credentialsId: 'github-token', variable: 'TEST')]) {
           sh """
 echo $TEST | gh auth login --with-token
