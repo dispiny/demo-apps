@@ -70,8 +70,23 @@ helm repo index . --merge index.yaml --url https://github.com/dispiny/demo-chart
           """
         }
 
+        sh '''
+NAME=$(gh release view v$VERSION --json assets --jq '.assets[].name')
+isFrontend=$(echo $NAME | grep frontend | wc -l)
+isBackend=$(echo $NAME | grep backend | wc -l)
+
+if [ $isBackend -eq 0 ] && [ $isFrontend -eq 1 ]; then
+  gh release upload v$VERSION backend-skills-repo-$VERSION.tgz
+elif [ $isBackend -eq 1 ] && [ $isFrontend -eq 0 ]; then
+  echo "Only Backend"
+elif [ $isBackend -eq 0 ] && [ $isFrontend -eq 0 ]; then
+  gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
+elif [ $isBackend -eq 1 ] && [ $isFrontend -eq 1 ]; then
+  echo "Full"
+fi'''
+
+
         sh '''#!/bin/bash
-            gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
             rm -rf *.tgz
             git add -A 
             git commit -m "$VERSION commit!"
