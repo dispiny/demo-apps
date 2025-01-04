@@ -70,7 +70,7 @@ git config user.email "aws.pjm1024cl@gmail.com"
 
         withCredentials([string(credentialsId: 'github-token', variable: 'GH_TOKEN')]) {
           sh """
-            echo $GH_TOKEN | gh auth locagin --with-token
+            echo $GH_TOKEN | gh auth login --with-token
           """
         }
 
