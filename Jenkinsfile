@@ -57,9 +57,19 @@ helm repo index . --merge index.yaml --url https://github.com/dispiny/demo-chart
 
     stage('helm-Post-Build') {
       steps {
+        sh '''
+git config user.name "dispiny"
+git config user.email "aws.pjm1024cl@gmail.com"
+        '''
+
+        withCredentials([usernamePassword(credentialsId: '5edb4fde-dd7d-43d9-bcc4-d87afdc119c8', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+          sh """
+            git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/dispiny/demo-charts.git
+            gh auth setup-git
+          """
+        }
+
         sh '''#!/bin/bash
-ls -al
-gh auth setup-git
 gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
 rm -rf *.tgz
 git add -A 
