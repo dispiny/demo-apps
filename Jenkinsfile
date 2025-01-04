@@ -69,17 +69,16 @@ git config user.email "aws.pjm1024cl@gmail.com"
         }
         // sh 'gh auth login -h github.com --with-token'
         // sh 'gh auth setup-git'
-        // withCredentials([string(credentialsId: 'github-token', variable: 'GH_TOKEN')]) {
-        //   sh """
-        //     echo $GH_TOKEN | gh auth login --with-token
-        //   """
-        // }
+        withCredentials([string(credentialsId: 'github-token', variable: 'GH_TOKEN')]) {
+          sh """
+gh auth status
+gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
+          """
+        }
         // sh 'echo $GH_TOKEN'
 
 
         sh '''#!/bin/bash
-gh auth status
-gh release create v$VERSION backend-skills-repo-$VERSION.tgz -t v$VERSION --generate-notes
 rm -rf *.tgz
 git add -A 
 git commit -m "$VERSION commit!"
