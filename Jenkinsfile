@@ -5,19 +5,16 @@ pipeline {
             returnStdout: true,
             script: 'cat VERSION'
         )}""" 
-        
-    EXIT_STATUS = """${sh(
-            returnStatus: true,
-            script: 'exit 1'
-        )}"""
   }
-  
+
   stages {
     stage('Pre-Build') {
       steps {
         sh '''#!/bin/bash
 aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com
+echo $VERSION
 '''
+
       }
     }
 
@@ -26,14 +23,15 @@ aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS
         sh '''#!/bin/bash
 chmod +x ./gradlew
 ./gradlew build
-docker build -t 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v1.1.0 . 
+docker build -t 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v$VERSION . 
 '''
       }
     }
 
     stage('Post-Build') {
       steps {
-        sh 'docker push 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v1.1.0'
+        sh 'echo $VERSION'
+        sh 'docker push 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v$VERSION'
       }
     }
 
@@ -46,6 +44,7 @@ docker build -t 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v
     stage('helm-Build') {
       steps {
         sh '''#!/bin/bash
+echo $VERSION
 sed -i "s|version:.*|version: $VERSION|g" backend-skills-repo/Chart.yaml
 sed -i "s|tag:.*|tag: v$VERSION|g" backend-skills-repo/values.yaml
 
