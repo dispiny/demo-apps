@@ -4,6 +4,7 @@ pipeline {
     stage('Pre-Build') {
       steps {
         sh '''#!/bin/bash
+env
 aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com
 echo $VERSION
 '''
