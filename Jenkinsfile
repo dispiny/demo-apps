@@ -24,6 +24,9 @@ docker build -t 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v
       steps {
         sh 'echo $VERSION'
         sh 'docker push 226347592148.dkr.ecr.ap-northeast-1.amazonaws.com/demo-backend:v$VERSION'
+        sh '''#!/bin/bash
+rm -rf *
+rm -rf .*'''
       }
     }
 
@@ -67,8 +70,8 @@ git push origin master'''
   }
   environment {
     VERSION = """${sh(
-                  returnStdout: true,
-                  script: 'cat VERSION'
-              )}"""
+                        returnStdout: true,
+                        script: 'cat VERSION'
+                    )}"""
     }
   }
